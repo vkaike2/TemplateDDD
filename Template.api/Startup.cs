@@ -1,17 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Template.Api.ExceptionFIlter;
+using Template.Data.Context;
+using Template.Data.Repository;
+using Template.Domain.IRepository;
 using Template.Domain.IServices;
 using Template.Service.Services;
+
 
 namespace Template.api
 {
@@ -32,7 +31,10 @@ namespace Template.api
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
             });
 
+            services.AddDbContext<FilmeContext>(opt => opt.UseSqlServer(Configuration["ConnectionStrings"]));
+
             services.AddTransient<IFilmeService, FilmeService>();
+            services.AddTransient<IFilmeRepository, FilmeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

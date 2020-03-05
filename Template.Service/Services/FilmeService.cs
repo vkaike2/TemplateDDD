@@ -1,42 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Template.Domain.IServices;
 using Template.Domain.Models;
+using Template.Domain.IRepository;
+using System.Threading.Tasks;
+using System;
 
 namespace Template.Service.Services
 {
     public class FilmeService : IFilmeService
     {
-        public static List<Filme> fakeDbLista = new List<Filme>();
+        //public static List<FilmeModel> fakeDbLista = new List<FilmeModel>();
 
-        public RequestRetorno<Filme> BuscarFilmePorId(int id)
+        public readonly IFilmeRepository _filmeRepository;
+
+        public FilmeService(IFilmeRepository filmeRepository)
+        {
+            _filmeRepository = filmeRepository;
+        }
+
+        public RequestRetorno<FilmeModel> BuscarFilmePorId(Guid id)
         {
             ValidarId(id);
+            FilmeModel filme = _filmeRepository.BuscarPorId(id);
 
-            Filme teste = null;
-            teste.Id = 4;
-            return new RequestRetorno<Filme>()
-            {
-                Informacao = fakeDbLista.FirstOrDefault(e => e.Id == id),
-                Mensagens = new List<string>() { "Filme encontrado com sucesso!" }
-            };
+            return
+                new RequestRetorno<FilmeModel>()
+                {
+                    Informacao = filme,
+                    Mensagens = new List<string>() { "Filme encontrado com sucesso!" }
+                };
         }
 
-        public RequestRetorno<string> InserirFilme(Filme model)
-        {
-            fakeDbLista.Add(model);
-            return new RequestRetorno<string>()
-            {
-                Informacao = "Filme inserido com sucesso!"
-            };
-        }
 
-        public RequestRetorno<string> AlterarFilme(Filme model)
+        public RequestRetorno<string> InserirFilme(FilmeModel model)
         {
-            Filme modelCadastrado = fakeDbLista.Where(e => e.Id == model.Id).FirstOrDefault();
-            modelCadastrado.Nome = model.Nome;
-            modelCadastrado.FaixaEtaria = model.FaixaEtaria;
+            model.Id = Guid.NewGuid();
+            _filmeRepository.SalvarAsync(model);
 
             return new RequestRetorno<string>()
             {
@@ -44,21 +43,52 @@ namespace Template.Service.Services
             };
         }
 
-        public RequestRetorno<string> RemoverFilme(int id)
+
+        public RequestRetorno<string> AlterarFilme(FilmeModel model)
         {
-            ValidarId(id);
-            fakeDbLista.Remove(fakeDbLista.FirstOrDefault(e => e.Id == id));
+            //FilmeModel modelCadastrado = fakeDbLista.Where(e => e.Id == model.Id).FirstOrDefault();
+            //modelCadastrado.Nome = model.Nome;
+            //modelCadastrado.FaixaEtaria = model.FaixaEtaria;
+
+            _filmeRepository.AlterarAsync(model);
+
+
             return new RequestRetorno<string>()
             {
-                Informacao = "Filme deletado com sucesso!"
+                Informacao = "Filme alterado com sucesso!"
             };
         }
 
-        private void ValidarId(int id)
+        public RequestRetorno<string> RemoverFilme(Guid id)
         {
-            if (!fakeDbLista.Any(e => e.Id == id))
+
+            _filmeRepository.DeleteAsync(id);
+
+            return new RequestRetorno<string>()
             {
-                throw new Exception("Não existe um filme para este Id!");
+                Informacao = "Filme Deletado com sucesso!"
+            };
+        }
+
+        private bool ValidarId(Guid id)
+        {
+
+
+            FilmeModel filme = _filmeRepository.BuscarPorId(id);
+            if (filme.Id == id)
+            {
+                return true;
+            }
+
+            throw new Exception("Id não encontrado !");
+
+        }
+        private void ValidarIdTeste(Guid id)
+        {
+            FilmeModel filme = _filmeRepository.BuscarPorId(id);
+            if (filme is null)
+            {
+                throw new Exception("Id não encontrado !");
             }
         }
     }

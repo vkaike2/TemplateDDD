@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using Template.Domain.IServices;
 using Template.Domain.Models;
 
@@ -20,24 +16,48 @@ namespace Template.api.Controllers
             _filmeService = filmeService;
         }
 
-      
+        //Exemplo Func
+        //[HttpGet]
+        //public IActionResult BuscarFilmes(string nome)
+        //{
+        //    bool retorno = TesteMetodod(e => e.Nome == nome);
+        //    return Ok(retorno);
+        //}
+
+        //private bool TesteMetodod(Func<FilmeModel, bool> funcIntBool)
+        //{
+        //    FilmeModel model = new FilmeModel()
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Nome = "Harry Potter"
+        //    };
+
+        //    bool retorno = funcIntBool(model);
+
+        //    return retorno;
+        //}
+
         [HttpGet]
         [Route("{id}")]
-        public IActionResult BuscarFilmes(int id)
+        public IActionResult BuscarFilmes(Guid id)
         {
-            RequestRetorno<Filme> retorno = _filmeService.BuscarFilmePorId(id);
+            RequestRetorno<FilmeModel> retorno = _filmeService.BuscarFilmePorId(id);
             return Ok(retorno);
         }
 
         [HttpPost]
-        public IActionResult InserirFilme(Filme model)
+        public IActionResult InserirFilme(FilmeModel model)
         {
+
             RequestRetorno<string> retorno = _filmeService.InserirFilme(model);
+            
             return Ok(retorno);
+      
         }
 
+
         [HttpPut]
-        public IActionResult AlterarFilme(Filme model)
+        public IActionResult AlterarFilme(FilmeModel model)
         {
             RequestRetorno<string> retonro = _filmeService.AlterarFilme(model);
             return Ok(retonro);
@@ -45,7 +65,7 @@ namespace Template.api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeletarFilme(int id)
+        public IActionResult DeletarFilme(Guid id)
         {
             RequestRetorno<string> retorno = _filmeService.RemoverFilme(id);
             return Ok(retorno);

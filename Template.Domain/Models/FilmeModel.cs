@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Template.Domain.Models
 {
-    public class Filme
+    public class FilmeModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Nome { get; set; }
         public string FaixaEtaria { get; set; }
     }

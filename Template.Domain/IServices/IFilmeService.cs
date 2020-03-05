@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using Template.Domain.Models;
 
 namespace Template.Domain.IServices
 {
     public interface IFilmeService
     {
-        RequestRetorno<Filme> BuscarFilmePorId(int id);
-        RequestRetorno<string> InserirFilme(Filme model);
-        RequestRetorno<string> AlterarFilme(Filme model);
-        RequestRetorno<string> RemoverFilme(int id);
+        RequestRetorno<FilmeModel> BuscarFilmePorId(Guid id);
+        RequestRetorno<string> InserirFilme(FilmeModel model);
+        RequestRetorno<string> AlterarFilme(FilmeModel model);
+        RequestRetorno<string> RemoverFilme(Guid id);
     }
 }
