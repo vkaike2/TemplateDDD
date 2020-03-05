@@ -7,8 +7,8 @@ namespace Template.Domain.IServices
     public interface IFilmeService
     {
         RequestRetorno<FilmeModel> BuscarFilmePorId(Guid id);
-        RequestRetorno<string> InserirFilme(FilmeModel model);
-        RequestRetorno<string> AlterarFilme(FilmeModel model);
+        RequestRetorno<FilmeModel> InserirFilme(FilmeModel model);
+        RequestRetorno<FilmeModel> AlterarFilme(FilmeModel model);
         RequestRetorno<string> RemoverFilme(Guid id);
     }
 }

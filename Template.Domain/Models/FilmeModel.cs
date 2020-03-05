@@ -8,6 +8,8 @@ namespace Template.Domain.Models
     {
         public Guid Id { get; set; }
         public string Nome { get; set; }
-        public string FaixaEtaria { get; set; }
+
+        public Guid? DescricaoId { get; set; }
+        public DescricaoModel Descricao { get; set; }
     }
 }

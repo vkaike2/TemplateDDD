@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Template.Data.Models;
+using Template.Data.Entitys;
 using Template.Domain.Models;
 
 namespace Template.Data.Mappings
@@ -9,6 +9,9 @@ namespace Template.Data.Mappings
         public MappingProfile()
         {
             CreateMap<FilmeModel, Filme>()
+                .ReverseMap();
+
+            CreateMap<DescricaoModel, Descricao>()
                 .ReverseMap();
         }
     }

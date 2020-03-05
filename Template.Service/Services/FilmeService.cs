@@ -4,24 +4,22 @@ using Template.Domain.Models;
 using Template.Domain.IRepository;
 using System.Threading.Tasks;
 using System;
+using Template.Data.Entitys;
 
 namespace Template.Service.Services
 {
     public class FilmeService : IFilmeService
     {
-        //public static List<FilmeModel> fakeDbLista = new List<FilmeModel>();
+        public readonly IUnitOfWork _unitOfWork;
 
-        public readonly IFilmeRepository _filmeRepository;
-
-        public FilmeService(IFilmeRepository filmeRepository)
+        public FilmeService(IUnitOfWork unitOfWork)
         {
-            _filmeRepository = filmeRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public RequestRetorno<FilmeModel> BuscarFilmePorId(Guid id)
         {
-            ValidarId(id);
-            FilmeModel filme = _filmeRepository.BuscarPorId(id);
+            FilmeModel filme = BuscarIdValidando(id);
 
             return
                 new RequestRetorno<FilmeModel>()
@@ -31,38 +29,78 @@ namespace Template.Service.Services
                 };
         }
 
-
-        public RequestRetorno<string> InserirFilme(FilmeModel model)
+        public RequestRetorno<FilmeModel> InserirFilme(FilmeModel model)
         {
+            if (model.Descricao != null)
+            {
+                model.DescricaoId = InserirDescricao(model.Descricao);
+            }
+
+
             model.Id = Guid.NewGuid();
-            _filmeRepository.SalvarAsync(model);
+            model.Descricao = null;
+            _unitOfWork.FilmeRepository.Salvar(model);
 
-            return new RequestRetorno<string>()
+            _unitOfWork.Commit();
+
+            return new RequestRetorno<FilmeModel>()
             {
-                Informacao = "Filme alterado com sucesso!"
+                Informacao = model
             };
         }
 
-
-        public RequestRetorno<string> AlterarFilme(FilmeModel model)
+        private Guid InserirDescricao(DescricaoModel descricao)
         {
-            //FilmeModel modelCadastrado = fakeDbLista.Where(e => e.Id == model.Id).FirstOrDefault();
-            //modelCadastrado.Nome = model.Nome;
-            //modelCadastrado.FaixaEtaria = model.FaixaEtaria;
+            descricao.Id = Guid.NewGuid();
+            _unitOfWork.DescricaoRepository.Salvar(descricao);
+            return descricao.Id;
+        }
 
-            _filmeRepository.AlterarAsync(model);
+        public RequestRetorno<FilmeModel> AlterarFilme(FilmeModel model)
+        {
+            FilmeModel filmeCadastrado = BuscarIdValidando(model.Id);
+            DescricaoModel descricaoCadastrada = null;
 
-
-            return new RequestRetorno<string>()
+            // => ALTERANDO DESCRICAO
+            if (filmeCadastrado.Descricao != null && model.Descricao != null)
             {
-                Informacao = "Filme alterado com sucesso!"
+                filmeCadastrado.Descricao.Texto = model.Descricao.Texto;
+                _unitOfWork.DescricaoRepository.Alterar(filmeCadastrado.Descricao);
+            }
+            // => INSERINDO NOVA DESCRICAO
+            else if(filmeCadastrado.Descricao == null && model.Descricao != null)
+            {
+                filmeCadastrado.DescricaoId = InserirDescricao(model.Descricao);
+            }
+            // => EXCLUIR DESCRICAO
+            else
+            {
+                descricaoCadastrada = filmeCadastrado.Descricao;
+                filmeCadastrado.Descricao = null;
+                filmeCadastrado.DescricaoId = null;
+            }
+
+            // => ALTERAR FILME
+            filmeCadastrado.Nome = model.Nome;
+            _unitOfWork.FilmeRepository.Alterar(filmeCadastrado);
+
+            _unitOfWork.Commit();
+
+            if (descricaoCadastrada != null)
+                _unitOfWork.DescricaoRepository.Delete(descricaoCadastrada);
+
+            _unitOfWork.Commit();
+
+            return new RequestRetorno<FilmeModel>()
+            {
+                Informacao = model
             };
         }
+
 
         public RequestRetorno<string> RemoverFilme(Guid id)
         {
-
-            _filmeRepository.DeleteAsync(id);
+            _unitOfWork.FilmeRepository.Delete(BuscarIdValidando(id));
 
             return new RequestRetorno<string>()
             {
@@ -70,26 +108,14 @@ namespace Template.Service.Services
             };
         }
 
-        private bool ValidarId(Guid id)
+        private FilmeModel BuscarIdValidando(Guid id)
         {
-
-
-            FilmeModel filme = _filmeRepository.BuscarPorId(id);
-            if (filme.Id == id)
-            {
-                return true;
-            }
-
-            throw new Exception("Id não encontrado !");
-
-        }
-        private void ValidarIdTeste(Guid id)
-        {
-            FilmeModel filme = _filmeRepository.BuscarPorId(id);
+            FilmeModel filme = _unitOfWork.FilmeRepository.BuscarPorId(id);
             if (filme is null)
             {
                 throw new Exception("Id não encontrado !");
             }
+            return filme;
         }
     }
 }

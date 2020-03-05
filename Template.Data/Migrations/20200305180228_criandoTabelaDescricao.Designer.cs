@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Template.Data.Context;
 
 namespace Template.Data.Migrations
 {
     [DbContext(typeof(FilmeContext))]
-    partial class FilmeContextModelSnapshot : ModelSnapshot
+    [Migration("20200305180228_criandoTabelaDescricao")]
+    partial class criandoTabelaDescricao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,10 +41,6 @@ namespace Template.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("DescricaoId")
-                        .HasColumnName("descricao_id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnName("nome_filme")
@@ -52,18 +50,7 @@ namespace Template.Data.Migrations
                     b.HasKey("Id")
                         .HasName("pk_id_filme");
 
-                    b.HasIndex("DescricaoId")
-                        .IsUnique()
-                        .HasFilter("[descricao_id] IS NOT NULL");
-
                     b.ToTable("Filme");
-                });
-
-            modelBuilder.Entity("Template.Data.Entitys.Filme", b =>
-                {
-                    b.HasOne("Template.Data.Entitys.Descricao", "Descricao")
-                        .WithOne("Filme")
-                        .HasForeignKey("Template.Data.Entitys.Filme", "DescricaoId");
                 });
 #pragma warning restore 612, 618
         }

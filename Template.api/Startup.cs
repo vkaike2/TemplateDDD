@@ -31,10 +31,16 @@ namespace Template.api
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
             });
 
-            services.AddDbContext<FilmeContext>(opt => opt.UseSqlServer(Configuration["ConnectionStrings"]));
+            services.AddDbContext<FilmeContext>(opt =>
+            {
+                opt.UseSqlServer(Configuration["ConnectionStrings"]);
+                opt.EnableDetailedErrors(true);
+                opt.EnableSensitiveDataLogging(true);
+
+            });
 
             services.AddTransient<IFilmeService, FilmeService>();
-            services.AddTransient<IFilmeRepository, FilmeRepository>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

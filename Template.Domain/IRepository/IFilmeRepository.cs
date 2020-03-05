@@ -7,10 +7,10 @@ namespace Template.Domain.IRepository
 {
     public interface IFilmeRepository
     {
-        void SalvarAsync(FilmeModel model);
+        void Salvar(FilmeModel model);
         FilmeModel BuscarPorId(Guid id);
-        void AlterarAsync(FilmeModel model);
-        void DeleteAsync(Guid id);
+        void Alterar(FilmeModel model);
+        void Delete(FilmeModel model);
         void Commit();//Retorno ou nao
     }
 }

@@ -7,6 +7,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200304174121_crudFilme.cs" />
     <Compile Remove="Migrations\20200304174121_crudFilme.Designer.cs" />
+    <Compile Remove="Migrations\20200305175347_adicionandoDescricao.cs" />
+    <Compile Remove="Migrations\20200305175347_adicionandoDescricao.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

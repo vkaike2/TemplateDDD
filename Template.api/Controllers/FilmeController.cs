@@ -16,27 +16,6 @@ namespace Template.api.Controllers
             _filmeService = filmeService;
         }
 
-        //Exemplo Func
-        //[HttpGet]
-        //public IActionResult BuscarFilmes(string nome)
-        //{
-        //    bool retorno = TesteMetodod(e => e.Nome == nome);
-        //    return Ok(retorno);
-        //}
-
-        //private bool TesteMetodod(Func<FilmeModel, bool> funcIntBool)
-        //{
-        //    FilmeModel model = new FilmeModel()
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Nome = "Harry Potter"
-        //    };
-
-        //    bool retorno = funcIntBool(model);
-
-        //    return retorno;
-        //}
-
         [HttpGet]
         [Route("{id}")]
         public IActionResult BuscarFilmes(Guid id)
@@ -48,18 +27,14 @@ namespace Template.api.Controllers
         [HttpPost]
         public IActionResult InserirFilme(FilmeModel model)
         {
-
-            RequestRetorno<string> retorno = _filmeService.InserirFilme(model);
-            
+            RequestRetorno<FilmeModel> retorno = _filmeService.InserirFilme(model);   
             return Ok(retorno);
-      
         }
-
 
         [HttpPut]
         public IActionResult AlterarFilme(FilmeModel model)
         {
-            RequestRetorno<string> retonro = _filmeService.AlterarFilme(model);
+            RequestRetorno<FilmeModel> retonro = _filmeService.AlterarFilme(model);
             return Ok(retonro);
         }
 
